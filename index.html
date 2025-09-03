@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مقترح الشركة العامة للخدمات الطبية الوقفية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: تم تصميم التطبيق كصفحة واحدة متدفقة مع شريط تنقل ثابت لتسهيل الاستكشاف. يبدأ بملخص جذاب للفكرة، ثم يستخدم مخططًا بصريًا لشرح نموذج "الأسهم الوقفية" المعقد. بعد ذلك، يعرض الأهداف المزدوجة (الربحية والاجتماعية) في تخطيط مقارن. يتم تنظيم تفاصيل الحوكمة والعدالة في أقسام تفاعلية (tabs) لتجنب إرهاق المستخدم. يتم إبراز الأثر المتوقع من خلال عدادات ديناميكية وخارطة طريق مرئية. العنصر الرئيسي التفاعلي هو نموذج مالي يسمح للمستخدمين باستكشاف كيفية توزيع الأرباح، مما يجعل المفهوم ملموسًا. هذا الهيكل يحول التقرير الرسمي إلى تجربة تعليمية وتفاعلية. -->
+    <!-- Visualization & Content Choices: 
+    - نموذج الأسهم الوقفية -> مخطط انسيابي (HTML/CSS) -> الهدف: تنظيم/تبسيط مفهوم معقد.
+    - الأهداف المزدوجة -> بطاقات متجاورة -> الهدف: مقارنة بين الأهداف الربحية والاجتماعية.
+    - الحوكمة والعدالة -> نظام تبويبات (Tabs) -> الهدف: تنظيم محتوى كثيف في مساحة صغيرة.
+    - الأثر المتوقع -> عدادات أرقام متحركة -> الهدف: إبراز الفوائد بشكل جذاب.
+    - آلية التنفيذ -> خط زمني بصري -> الهدف: عرض العملية بشكل تسلسلي وواضح.
+    - توزيع الأرباح -> مخطط أعمدة تفاعلي (Chart.js) مع منزلق (slider) -> الهدف: إشراك المستخدم وتمكينه من استكشاف العلاقة بين الأرباح والأثر الاجتماعي.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #FDF8F0;
+            color: #4A4A4A;
+        }
+        .bg-primary { background-color: #3D8B8B; }
+        .text-primary { color: #3D8B8B; }
+        .bg-secondary { background-color: #E6A457; }
+        .text-secondary { color: #E6A457; }
+        .bg-accent { background-color: #FDF8F0; }
+        .border-primary { border-color: #3D8B8B; }
+        .border-secondary { border-color: #E6A457; }
+        .tajawal-bold { font-weight: 700; }
+        .tajawal-medium { font-weight: 500; }
+        .tajawal-regular { font-weight: 400; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 450px;
+        }
+        .tab-active {
+            border-bottom: 3px solid #3D8B8B;
+            color: #3D8B8B;
+            font-weight: 700;
+        }
+         .flow-arrow::after {
+            content: '←';
+            font-size: 2rem;
+            color: #E6A457;
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        @media (max-width: 768px) {
+            .flow-arrow::after {
+                content: '↓';
+                left: 50%;
+                top: -30px;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header id="header" class="bg-accent shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-2xl tajawal-bold text-primary">الشركة الوقفية العامة للخدمات الطبية </h1>
+            <div class="hidden md:flex space-x-8 space-x-reverse">
+                <a href="#model" class="tajawal-medium text-gray-700 hover:text-primary transition">فكرتنا</a>
+                <a href="#objectives" class="tajawal-medium text-gray-700 hover:text-primary transition">أهدافنا</a>
+                <a href="#governance" class="tajawal-medium text-gray-700 hover:text-primary transition">الحوكمة</a>
+                <a href="#impact" class="tajawal-medium text-gray-700 hover:text-primary transition">الأثر</a>
+                <a href="#interactive-model" class="tajawal-medium text-gray-700 hover:text-primary transition">النموذج المالي</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="bg-accent py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-5xl md:text-6xl tajawal-bold text-gray-800 mb-4">نموذج مبتكر للرعاية الصحية</h2>
+                <p class="text-xl tajawal-regular text-gray-600 max-w-3xl mx-auto">دمج بين كفاءة القطاع الخاص والأثر المجتمعي المستدام من خلال فكرة "الأسهم الوقفية" لتحقيق نهضة في الخدمات الطبية في السودان.</p>
+            </div>
+        </section>
+        
+        <!-- Our Model Section -->
+        <section id="model" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl tajawal-bold text-primary">فكرتنا المبتكرة: آلية الأسهم الوقفية</h3>
+                    <p class="tajawal-regular text-gray-600 mt-2 max-w-2xl mx-auto">نحول مساهمات المسؤولية الاجتماعية للشركات من إنفاق مؤقت إلى أصل استثماري يدر ربحًا دائمًا يُوجّه بالكامل لخدمة المجتمع.</p>
+                </div>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-0">
+                    <!-- Step 1 -->
+                    <div class="text-center p-6 bg-accent rounded-lg shadow-lg w-64">
+                        <div class="text-3xl text-secondary mb-2">①</div>
+                        <h4 class="text-xl tajawal-bold mb-2">مساهمة الشركات</h4>
+                        <p class="text-sm">تشتري الشركات الكبرى "أسهماً وقفية" من مخصصات مسؤوليتها الاجتماعية.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative text-center p-6 bg-accent rounded-lg shadow-lg w-64 md:mx-12 flow-arrow">
+                        <div class="text-3xl text-secondary mb-2">②</div>
+                        <h4 class="text-xl tajawal-bold mb-2">أصل محفوظ</h4>
+                        <p class="text-sm">أصل السهم الوقفي لا يباع، مما يضمن استدامة الاستثمار.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative text-center p-6 bg-accent rounded-lg shadow-lg w-64 flow-arrow">
+                         <div class="text-3xl text-secondary mb-2">③</div>
+                        <h4 class="text-xl tajawal-bold mb-2">تحقيق الأرباح</h4>
+                        <p class="text-sm">الشركة تقدم خدمات طبية عالية الجودة وتحقق أرباحًا تشغيلية.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="relative text-center p-6 bg-accent rounded-lg shadow-lg w-64 md:mx-12 flow-arrow">
+                        <div class="text-3xl text-secondary mb-2">④</div>
+                        <h4 class="text-xl tajawal-bold mb-2">توجيه الأثر</h4>
+                        <p class="text-sm">كامل أرباح الأسهم الوقفية توجه للمشاريع المجتمعية ودعم الكادر الصحي العامل بالمنشآت الصحية العامة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dual Objectives Section -->
+        <section id="objectives" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl tajawal-bold text-primary">أهدافنا المزدوجة</h3>
+                    <p class="tajawal-regular text-gray-600 mt-2">نوازن بين تحقيق الاستدامة المالية وتقديم أثر اجتماعي عميق.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Profitability Objectives -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border-t-4 border-secondary">
+                        <h4 class="text-2xl tajawal-bold text-secondary mb-4">🎯 الأهداف الربحية</h4>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><span class="tajawal-medium">أرباح مستدامة:</span> من خلال تقديم خدمات طبية عالية الجودة.</li>
+                            <li><span class="tajawal-medium">تطوير البنية التحتية:</span> بناء منشآت صحية حديثة ومجهزة.</li>
+                            <li><span class="tajawal-medium">تعزيز الثقة الدولية:</span> تقديم خدمات راقية للهيئات الدبلوماسية والمنظمات الدولية.</li>
+                            <li><span class="tajawal-medium">بديل للتأمين:</span> توفير خدمات شاملة بتكلفة فعالة للشركات المساهمة.</li>
+                        </ul>
+                    </div>
+                    <!-- Social Objectives -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg border-t-4 border-primary">
+                        <h4 class="text-2xl tajawal-bold text-primary mb-4">❤️ الأهداف الاجتماعية</h4>
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><span class="tajawal-medium">تمويل مستدام:</span> توفير خدمات مجانية ومخفضة للفئات المحتاجة.</li>
+                            <li><span class="tajawal-medium">دعم الكادر الصحي:</span>توجيه الأرباح لشركة مجتمعية يملكها الممارسون الصحيون بالقطاع الحكومي</li>
+                             <li><span class="tajawal-medium">سد الفجوات الصحية:</span> إنشاء منشآت للرعاية الأولية والثانوية.</li>
+                            <li><span class="tajawal-medium">دعم الأبحاث والتعليم:</span> تمويل الأبحاث الطبية وتقديم منح دراسية.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Governance & Justice Section -->
+        <section id="governance" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl tajawal-bold text-primary">آلية العمل: الحوكمة والعدالة</h3>
+                    <p class="tajawal-regular text-gray-600 mt-2">نظام حوكمة شفاف يضمن تحقيق الأهداف وتوزيع الخدمات بعدالة.</p>
+                </div>
+                <div>
+                    <div class="flex justify-center border-b border-gray-300 mb-8">
+                        <button data-tab="tab1" class="tab-button p-4 tajawal-medium text-gray-500 tab-active">هيكل المساهمة</button>
+                        <button data-tab="tab2" class="tab-button p-4 tajawal-medium text-gray-500">الحوكمة والإدارة</button>
+                        <button data-tab="tab3" class="tab-button p-4 tajawal-medium text-gray-500">ضمانات العدالة</button>
+                    </div>
+                    <div id="tab1" class="tab-content">
+                        <div class="bg-accent p-8 rounded-lg text-center">
+                            <h4 class="text-2xl tajawal-bold text-gray-800 mb-2">المساهمون ونوع المساهمة</h4>
+                            <p class="text-gray-600">تقوم الشركات الكبرى بشراء أسهم "وقفية"، حيث يُحبس أصل السهم وتُوجّه كامل أرباحه للأهداف الاجتماعية. تُخصص النسبة الأكبر من الأرباح لدعم "الشركة المجتمعية" التي يملكها الممارسون الصحيون، مما يضمن استدامة الدعم لهذا القطاع الحيوي.</p>
+                        </div>
+                    </div>
+                    <div id="tab2" class="tab-content hidden">
+                        <div class="bg-accent p-8 rounded-lg grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xl tajawal-bold text-gray-800 mb-2">هيكل إداري متكامل</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li>**مجلس إدارة:** يضم ممثلين عن المساهمين وخبراء مستقلين.</li>
+                                    <li>**لجنة الأوقاف:** لجنة متخصصة تضمن توجيه الأرباح للمصارف المحددة.</li>
+                                    <li>**صندوق مستقل:** لإدارة الأسهم الوقفية بشفافية ونشر تقارير دورية.</li>
+                                </ul>
+                            </div>
+                            <div>
+                               <h4 class="text-xl tajawal-bold text-gray-800 mb-2">ضمانات قانونية</h4>
+                               <p>يتم إبرام عقود قانونية ملزمة لضمان تحويل الأرباح للشركة المجتمعية وحماية غرض الأسهم الوقفية من أي تغييرات مستقبلية.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab3" class="tab-content hidden">
+                        <div class="bg-accent p-8 rounded-lg">
+                            <h4 class="text-2xl tajawal-bold text-gray-800 mb-4 text-center">آليات ضمان الاستخدام العادل</h4>
+                            <ul class="space-y-3 max-w-3xl mx-auto">
+                                <li class="flex items-start"><span class="text-secondary tajawal-bold text-xl ml-3">✓</span><div><strong class="tajawal-medium">سياسات واضحة:</strong> تحديد نطاق الخدمات المجانية للممارسين (رعاية أولية وثانوية مجانية، وخصومات على الخدمات المعقدة).</div></li>
+                                <li class="flex items-start"><span class="text-secondary tajawal-bold text-xl ml-3">✓</span><div><strong class="tajawal-medium">الأولوية للمجتمع:</strong> إعطاء الأولوية دائمًا لسد الفجوات الصحية وخدمة الفئات الأكثر احتياجًا.</div></li>
+                                <li class="flex items-start"><span class="text-secondary tajawal-bold text-xl ml-3">✓</span><div><strong class="tajawal-medium">رقابة ومتابعة:</strong> إنشاء نظام إداري لمراقبة استخدام الخدمات وضمان عدم استنزاف الموارد.</div></li>
+                                <li class="flex items-start"><span class="text-secondary tajawal-bold text-xl ml-3">✓</span><div><strong class="tajawal-medium">مساءلة داخلية:</strong> ملكية الممارسين للشركة المجتمعية تخلق دافعًا للإدارة العادلة للموارد.</div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section id="impact" class="py-20">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h3 class="text-4xl tajawal-bold text-primary">الأثر المتوقع وخارطة الطريق</h3>
+                </div>
+                <div class="grid md:grid-cols-4 gap-8 text-center mb-16">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl text-secondary tajawal-bold mb-2" data-count="1">0</div>
+                        <h4 class="tajawal-medium">استثمار مستدام</h4>
+                        <p class="text-sm text-gray-600">تحويل الإنفاق الخيري إلى أصل يدر دخلاً مستمرًا.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl text-secondary tajawal-bold mb-2" data-count="2">0</div>
+                        <h4 class="tajawal-medium">أثر اجتماعي مضاعف</h4>
+                        <p class="text-sm text-gray-600">دمج الكفاءة الاقتصادية مع خدمة المجتمع.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl text-secondary tajawal-bold mb-2" data-count="3">0</div>
+                        <h4 class="tajawal-medium">شفافية ومساءلة</h4>
+                        <p class="text-sm text-gray-600">الخضوع لمعايير الإفصاح كشركة مساهمة عامة.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl text-secondary tajawal-bold mb-2" data-count="4">0</div>
+                        <h4 class="tajawal-medium">نموذج مبتكر</h4>
+                        <p class="text-sm text-gray-600">إطار جديد للعمل الخيري يمكن تطبيقه في قطاعات أخرى.</p>
+                    </div>
+                </div>
+                
+                <!-- Roadmap -->
+                <div class="relative mt-12">
+                    <div class="border-r-2 border-primary absolute h-full top-0" style="right: 15px;"></div>
+                    <ul class="space-y-8">
+                        <li class="flex items-center">
+                            <div class="bg-primary rounded-full h-8 w-8 z-10"></div>
+                            <div class="pr-10"><h4 class="tajawal-bold">المرحلة 1:</h4><p>إعداد دراسة الجدوى والتأسيس القانوني.</p></div>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="bg-primary rounded-full h-8 w-8 z-10"></div>
+                            <div class="pr-10"><h4 class="tajawal-bold">المرحلة 2:</h4><p>إصدار الأسهم الوقفية وطرحها للاكتتاب.</p></div>
+                        </li>
+                         <li class="flex items-center">
+                            <div class="bg-primary rounded-full h-8 w-8 z-10"></div>
+                             <div class="pr-10"><h4 class="tajawal-bold">المرحلة 3:</h4><p>بدء التشغيل وتقديم الخدمات الطبية.</p></div>
+                        </li>
+                         <li class="flex items-center">
+                            <div class="bg-primary rounded-full h-8 w-8 z-10"></div>
+                             <div class="pr-10"><h4 class="tajawal-bold">المرحلة 4:</h4><p>التوسع الاستراتيجي عبر إعادة استثمار الأرباح والشراكات.</p></div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Model Section -->
+        <section id="interactive-model" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl tajawal-bold text-primary">النموذج المالي التفاعلي</h3>
+                    <p class="tajawal-regular text-gray-600 mt-2 max-w-3xl mx-auto">استكشف كيف تترجم أرباحنا إلى أثر مجتمعي. حرّك المنزلق لترى كيف يتم توزيع الأرباح السنوية الافتراضية على المصارف الوقفية.</p>
+                </div>
+                <div class="bg-accent p-8 rounded-lg shadow-lg">
+                    <div class="mb-6">
+                        <label for="profitSlider" class="block tajawal-medium text-lg mb-2">حجم الأرباح السنوية (بالمليون جنيه سوداني)</label>
+                        <input id="profitSlider" type="range" min="1" max="50" value="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="text-center text-2xl tajawal-bold text-secondary mt-2"><span id="profitValue">10</span> مليون</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-2xl tajawal-bold">الشركة الوقفية العامة للخدمات الطبية</h3>
+            <p class="tajawal-regular mt-2">شركاء لتعزيز الأمان لصحي</p>
+            <div class="mt-4">
+                <p>📍 المركز الرئيسي: الخرطوم</p>
+                <p>🌐 يجوز لمجلس الإدارة إنشاء فروع داخل وخارج السودان.</p>
+		<p>     suleiman.abusalih@kermatech.net</p>	
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tabs functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+                    button.classList.add('tab-active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Counter animation
+            const counters = document.querySelectorAll('[data-count]');
+            const speed = 200; 
+
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-count');
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    const increment = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment);
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            };
+            
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            counters.forEach(counter => {
+                 observer.observe(counter);
+            });
+
+
+            // Interactive Chart
+            const profitSlider = document.getElementById('profitSlider');
+            const profitValue = document.getElementById('profitValue');
+            const ctx = document.getElementById('profitChart').getContext('2d');
+            let profitChart;
+
+            const allocationPercentages = {
+                communityServices: 0.40,
+                practitionerSupport: 0.30,
+                researchAndScholarships: 0.10,
+                expansionReinvestment: 0.20
+            };
+
+            function updateChart(profits) {
+                profitValue.textContent = profits;
+                const data = {
+                    communityServices: profits * allocationPercentages.communityServices,
+                    practitionerSupport: profits * allocationPercentages.practitionerSupport,
+                    researchAndScholarships: profits * allocationPercentages.researchAndScholarships,
+                    expansionReinvestment: profits * allocationPercentages.expansionReinvestment
+                };
+
+                if (profitChart) {
+                    profitChart.data.datasets[0].data = Object.values(data);
+                    profitChart.update();
+                } else {
+                    profitChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['خدمات مجتمعية', 'دعم الكادر الصحي', 'أبحاث ومنح', 'إعادة استثمار للتوسع'],
+                            datasets: [{
+                                label: 'توزيع الأرباح (مليون جنيه)',
+                                data: Object.values(data),
+                                backgroundColor: [
+                                    'rgba(61, 139, 139, 0.7)',
+                                    'rgba(230, 164, 87, 0.7)',
+                                    'rgba(153, 102, 255, 0.7)',
+                                    'rgba(75, 192, 192, 0.7)'
+                                ],
+                                borderColor: [
+                                    '#3D8B8B',
+                                    '#E6A457',
+                                    '#9966FF',
+                                    '#4BC0C0'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'المبلغ (مليون جنيه سوداني)'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += new Intl.NumberFormat('ar-SD').format(context.parsed.y) + ' مليون';
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            profitSlider.addEventListener('input', (event) => {
+                updateChart(event.target.value);
+            });
+
+            updateChart(profitSlider.value);
+        });
+    </script>
+</body>
+</html>
